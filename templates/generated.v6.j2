@@ -1,7 +1,12 @@
 #!/bin/sh
 # {{ ansible_managed }}
+set -e
 {% set merged = firewall_v6_default_rules.copy() %}
 {% set _ = merged.update(firewall_v6_group_rules) %}
+{% for group in group_names %}
+{% set _ = merged.update( lookup('vars', 'firewall_v6_group_' + group + '_rules', default="" ) ) %}
+{% endfor %}
+
 {% set _ = merged.update(firewall_v6_host_rules) %}
 
 # flush rules
